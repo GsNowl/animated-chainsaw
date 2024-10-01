@@ -1,0 +1,6 @@
+*.log
+*.zip
+profiles.json
+.idea/
+__pycache__/
+*.ini
