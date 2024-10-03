@@ -1,4 +1,4 @@
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, ElementClickInterceptedException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium import webdriver
@@ -23,6 +23,12 @@ class Driver:
         except Exception as ex:
             print(ex)
 
+    def switch_to_work_window(self):
+        for j in self.driver.window_handles:
+            self.driver.switch_to.window(j)
+            if self.driver.current_url not in ['chrome-extension://acmacodkjbdgmoleebolmdjonilkdbch/offscreen.html']:
+                break
+
     def check_exists_by_xpath(self, xpath):
         try:
             self.driver.find_element(By.XPATH, xpath)
@@ -30,9 +36,12 @@ class Driver:
             return False
         return True
 
-    def open(self, url):
+    def open(self, url, seconds=0):
         self.driver.get(url)
         logger.info(f'GO TO {url}')
+        if seconds > 0:
+            logger.info(f'Sleep {seconds} second(s)')
+            time.sleep(seconds)
 
     def click(self, xpath):
         if self.check_exists_by_xpath(xpath):
@@ -49,7 +58,11 @@ class Driver:
     def click_with_wait(self, xpath):
         while not self.check_exists_by_xpath(xpath):
             time.sleep(1)
-        self.driver.find_element(By.XPATH, xpath).click()
+        try:
+            self.driver.find_element(By.XPATH, xpath).click()
+        except ElementClickInterceptedException:
+            time.sleep(5)
+            self.driver.find_element(By.XPATH, xpath).click()
 
     def send_keys(self, keys, xpath):
         if self.check_exists_by_xpath(xpath):
@@ -81,3 +94,17 @@ class Driver:
             self.driver.close()
             self.switch_to_new_window()
             time.sleep(1)
+
+    def switch_to_specific_window(self, url):
+        for i in self.driver.window_handles:
+            self.driver.switch_to.window(i)
+            if self.driver.current_url == url:
+                return True
+        return False
+
+    def get_text(self, xpath):
+        return self.driver.find_element(By.XPATH, xpath).text
+
+    def switch_to_last(self):
+        self.driver.switch_to.window(self.driver.window_handles[-1])
+        logger.info('Switch to last window')
