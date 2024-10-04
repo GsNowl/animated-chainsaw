@@ -40,7 +40,7 @@ def main(profiles_dict):
 
         rabby = RabbyWallet(driver, i)
         driver.switch_to_work_window()
-        rabby.import_mnemonic()
+        # rabby.import_mnemonic()
         rabby.login()
 
         sonic = SonicLabs(driver, i)
