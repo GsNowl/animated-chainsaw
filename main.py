@@ -33,25 +33,25 @@ def main(profiles_dict):
         profiles_dict = [i['user_id'] for i in AdsAPI().get_profiles() if i['user_id'] not in completed_profiles]
 
     for i in profiles_dict:
-        i = 'jd2uayd'
+        # i = 'jd2uayd'
         driver = Driver(i, version_)
         time.sleep(1.5)
         # driver.close_all_windows()
 
         rabby = RabbyWallet(driver, i)
         driver.switch_to_work_window()
-        # rabby.import_mnemonic()
-        # rabby.login()
+        rabby.import_mnemonic()
+        rabby.login()
 
         sonic = SonicLabs(driver, i)
         sonic.rabby = rabby
         driver.switch_to_work_window()
-        # sonic.connect(rabby)
-        # sonic.plinko()
-        # sonic.mines()
+        sonic.connect()
+        sonic.plinko()
+        sonic.mines()
         sonic.wheel()
 
-        time.sleep(12321)
+        # time.sleep(12321)
 
         AdsAPI().stop_profile(i)
         completed_profiles.append(i)
